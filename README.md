@@ -430,3 +430,4 @@ Industrial\_Machine\_Failure\_Prediction/
 
 &#x20;   └── 03\_Model\_Evaluation.ipynb
 
+https://industrial-machine-failure-prediction-pmsvbmeue5ifk6qrcuahtc.streamlit.app/

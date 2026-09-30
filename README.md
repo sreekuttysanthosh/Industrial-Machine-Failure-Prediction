@@ -1,433 +1,521 @@
-@"
+# 🏭 Industrial Pump Maintenance Prediction
 
-\# Industrial Pump Maintenance Prediction
+A **machine learning-based predictive maintenance application** that estimates whether an industrial pump requires maintenance using sensor and operational measurements.
 
+The project implements an end-to-end machine learning workflow covering **data exploration, preprocessing, feature analysis, classification, model evaluation, error analysis, and deployment using Streamlit**.
 
+🔗 **Live Application:**  
+https://industrial-machine-failure-prediction-pmsvbmeue5ifk6qrcuahtc.streamlit.app/
 
-\## 1. Project Overview
+---
 
+## 🎯 Project Objective
 
+Industrial equipment continuously generates operational data such as temperature, vibration, pressure, flow rate, rotational speed, and operating hours.
 
-This project develops an end-to-end machine learning prototype for predicting whether an industrial pump requires maintenance based on sensor and operational measurements.
+The objective of this project is to investigate whether these measurements can be used to identify pumps that require maintenance.
 
+The project focuses on:
 
+- 🔍 Understanding industrial sensor data
+- 📊 Performing exploratory data analysis
+- 🧹 Preparing data for machine learning
+- 🤖 Comparing classification models
+- 📈 Evaluating predictive performance
+- 🔎 Performing model error analysis
+- 💾 Saving the trained model
+- 🌐 Deploying the prediction system using Streamlit
 
-The project is based on Problem 21: Industrial Machine Failure Prediction from the Learn Depth Academy LLP Track 1 Final Capstone.
+> **Note:** The available dataset provides a `Maintenance_Flag` rather than a directly documented "failure within a defined operating window" label. Therefore, `Maintenance_Flag` is used as the prediction target in this educational implementation.
 
+---
 
+## 📌 Problem Statement
 
-The solution uses free and open-source Python tools and includes data exploration, preprocessing, foundational machine learning models, evaluation, error analysis, and a lightweight Streamlit application.
+Predict whether an industrial pump requires maintenance based on its sensor and operational measurements.
 
+The system takes measurements such as **temperature, vibration, pressure, flow rate, RPM, and operational hours** and predicts whether the pump is classified as requiring maintenance.
 
+The project is based on **Problem 21: Industrial Machine Failure Prediction** from the Learn Depth Academy LLP Track 1 Final Capstone.
 
-\## 2. Problem Statement
+---
 
+## 🗂️ Dataset
 
+The project uses the **Large Industrial Pump Maintenance Dataset** available through Kaggle.
 
-Predict whether a machine is likely to experience a failure within a defined operating window.
 
+**Dataset Source:** `selonamaris/large-industrial-pump-maintenance-dataset`
 
+### Dataset Characteristics
 
-For this educational implementation, the available dataset provides a binary `Maintenance\_Flag` rather than a directly documented failure-within-operating-window label. Therefore, the project uses `Maintenance\_Flag` as the prediction target.
+| Property | Value |
+|---|---:|
+| Observations | 20,000 |
+| Columns | 8 |
+| Industrial Pumps | 5 |
+| Target | `Maintenance_Flag` |
 
-
-
-\## 3. Project Objective
-
-
-
-Develop an end-to-end machine learning solution that:
-
-
-
-\- Investigates the assigned dataset
-
-\- Performs data quality analysis and EDA
-
-\- Prepares the data
-
-\- Builds foundational classification models
-
-\- Evaluates model performance
-
-\- Performs error analysis
-
-\- Saves the final trained model
-
-\- Demonstrates prediction through a Streamlit application
-
-
-
-\## 4. Dataset
-
-
-
-Dataset:
-
-
-
-Large Industrial Pump Maintenance Dataset
-
-
-
-Source:
-
-
-
-Kaggle — `selonamaris/large-industrial-pump-maintenance-dataset`
-
-
-
-Dataset characteristics:
-
-
-
-\- 20,000 observations
-
-\- 8 columns
-
-\- 5 industrial pumps
-
-
-
-\### Dataset Features
-
-
+### Features
 
 | Feature | Description |
-
 |---|---|
+| `Pump_ID` | Identifier of the industrial pump |
+| `Temperature` | Pump temperature |
+| `Vibration` | Pump vibration measurement |
+| `Pressure` | Pump pressure |
+| `Flow_Rate` | Pump flow rate |
+| `RPM` | Rotational speed |
+| `Operational_Hours` | Total operating hours |
+| `Maintenance_Flag` | Binary maintenance target |
+
+---
+---
+
+
+## 🎯 Target Variable
+
+The prediction target is:
+```text
+Maintenance_Flag
+```
+| Value         | Meaning                         |
+| ------------- | ------------------------------- |
+| `0`           | No maintenance required         |
+| `1`           |       Maintenance required      |
+
+---
+## 🧬 Features Used for Prediction
+The following six variables are used as model inputs:
+```text
+Temperature
+Vibration
+Pressure
+Flow_Rate
+RPM
+Operational_Hours
+```
+`Pump_ID`  is excluded because it acts as an identifier rather than a direct sensor or operational measurement.
+
+The target variable is also excluded from the input features to prevent target leakage.
+
+---
+---
+## Machine Learning Workflow
+
+The project follows a complete machine learning pipeline:
+```text
+Industrial Pump Dataset
+          │
+          ▼
+   Data Quality Analysis
+          │
+          ▼
+ Exploratory Data Analysis
+          │
+          ▼
+    Feature Selection
+          │
+          ▼
+    Train / Test Split
+          │
+          ▼
+ Classification Models
+          │
+     ┌────┼────┐
+     ▼    ▼    ▼
+ Logistic  Decision  KNN
+Regression  Tree
+     │    │    │
+     └────┼────┘
+          ▼
+   Model Evaluation
+          │
+          ▼
+    Error Analysis
+          │
+          ▼
+     Final Model
+          │
+          ▼
+   Saved Model (.pkl)
+          │
+          ▼
+     Streamlit App
+          │
+          ▼
+ Maintenance Prediction
+```
+
+## 📊 Exploratory Data Analysis
+
+Several analyses were performed to understand the dataset before modelling.
+
+**Data Quality**
+
+The analysis included:
+- Dataset dimensions
+- Data types
+- Missing-value analysis
+- Duplicate detection
+- Descriptive statistics
+- Descriptive statistics
+
+**Feature Analysis**
 
-| Pump\_ID | Pump identifier |
+The project also investigated:
+- Feature distributions
+- Boxplots
+- Feature correlations
+- Mutual information
+- Pump-level maintenance distributions
+- IQR-based outlier detection
+- Potential data leakage
 
-| Temperature | Pump temperature |
+**Key Findings**
 
-| Vibration | Pump vibration measurement |
+The exploratory analysis showed:
 
-| Pressure | Pump pressure |
+- The dataset contains 20,000 observations.
+- No missing values were identified.
+- No duplicate rows were identified.
+- The two maintenance classes were approximately balanced.
+- No IQR-based outliers were detected in the six predictive features.
+- The feature distributions showed substantial overlap between maintenance classes.
+- Individual feature correlations with the target were very small.
+- Mutual-information scores were also very small.
 
-| Flow\_Rate | Pump flow rate |
+These findings suggested that the available features may contain limited information for distinguishing the two maintenance classes.
 
-| RPM | Rotational speed |
+---
 
-| Operational\_Hours | Operating hours |
+---
 
-| Maintenance\_Flag | Binary maintenance target |
+### 🤖 Machine Learning Models
 
+Three foundational classification algorithms were evaluated:
 
+**1. Logistic Regression**
 
-\## 5. Target Variable
+Used as a linear classification baseline.
 
+**2. Decision Tree**
 
+Used to model potentially nonlinear relationships between sensor measurements and maintenance status.
 
-`Maintenance\_Flag`
+The final Decision Tree configuration was:
+```text
+DecisionTreeClassifier(
+    max_depth=20,
+    random_state=42
+)
+```
+**3. K-Nearest Neighbours (KNN)**
+Used as a distance-based classification baseline.
+Decision Tree and KNN configurations were evaluated using 5-fold cross-validation on the training data.
 
+---
 
 
-\- `0` = No maintenance required
+---
 
-\- `1` = Maintenance required
+### 📈 Model Evaluation
 
+The final Decision Tree was evaluated on a held-out test set.
 
+| METRIC        | RESULT                          |
+| ------------- | ------------------------------- |
+| Accuracy      | 49.98%                          |
+| Precision     | 49.84%                          |
+| Recall        | 55.42%                          |
+| F1-Score      | 52.48%                          |
+|ROC-AUC        | 0.513                           |
 
-\## 6. Features Used for Prediction
 
+### Confusion Matrix
 
+|              | Predicted 0 | Predicted 1 |
+| ------------ | ----------: | ----------: |
+| **Actual 0** |         894 |       1,112 |
+| **Actual 1** |         889 |       1,105 |
 
-The following six variables were used as predictive features:
+---
 
+### 🔎 Model Interpretation
 
+The model achieved approximately 50% accuracy, while the ROC-AUC was approximately 0.5.
 
-\- Temperature
+This indicates that the available sensor and operational variables provide limited predictive discrimination for the `Maintenance_Flag`  target in this dataset.
 
-\- Vibration
+Therefore, the trained model should be considered an **educational machine learning prototype**, rather than a production-ready predictive maintenance system.
 
-\- Pressure
+This result is also an important finding of the project: a machine learning model does not necessarily become useful simply because a dataset contains multiple sensor measurements.
 
-\- Flow\_Rate
+------
+## 🧪 Error Analysis
 
-\- RPM
+The final model generated:
+- 1,112 False Positives
+- 889 False Negatives
 
-\- Operational\_Hours
+Both error types occurred frequently, indicating substantial overlap between the two target classes.
 
+Some differences were observed between false-positive and false-negative observations, particularly for:
+- `RPM` 
+- `Operational_Hours` 
 
+However, these differences were not sufficient to produce strong overall class discrimination.
+This analysis highlights the importance of examining where a model fails, rather than relying only on a single performance metric.
 
-`Pump\_ID` was excluded because it is an identifier rather than a sensor or operational measurement.
+-----
+## 🌐 Streamlit Application
 
+A lightweight Streamlit interface was developed to demonstrate the trained model.
 
-
-The target variable `Maintenance\_Flag` was also excluded from the input features to prevent direct target leakage.
-
-
-
-\## 7. Exploratory Data Analysis
-
-
-
-The following investigations were performed:
-
-
-
-\- Dataset shape and structure
-
-\- Data types
-
-\- Missing-value analysis
-
-\- Duplicate detection
-
-\- Descriptive statistics
-
-\- Class balance
-
-\- Feature distributions
-
-\- Boxplots
-
-\- Class-wise feature analysis
-
-\- Correlation analysis
-
-\- Mutual information
-
-\- Pump-level target distribution
-
-\- IQR-based outlier detection
-
-\- Data leakage check
-
-
-
-\### Main EDA Findings
-
-
-
-\- Dataset contains 20,000 observations.
-
-\- No missing values were identified.
-
-\- No duplicate rows were identified.
-
-\- The target classes were approximately balanced.
-
-\- No IQR-based outliers were detected in the six predictive features.
-
-\- Feature distributions showed substantial overlap between the two maintenance classes.
-
-\- Correlations between individual features and the target were very small.
-
-\- Mutual-information scores were also very small.
-
-
-
-\## 8. Machine Learning Models
-
-
-
-Three foundational classification approaches were evaluated:
-
-
-
-1\. Logistic Regression
-
-2\. Decision Tree
-
-3\. K-Nearest Neighbours (KNN)
-
-
-
-The Decision Tree and KNN hyperparameters were evaluated using 5-fold cross-validation on the training data.
-
-
-
-\## 9. Final Model
-
-
-
-The final prototype uses:
-
-
-
-\*\*Decision Tree Classifier\*\*
-
-
-
-Configuration:
-
-
-
-\- `max\_depth = 20`
-
-\- `random\_state = 42`
-
-
-
-The final model was selected after comparing the evaluated foundational approaches.
-
-
-
-\## 10. Model Evaluation
-
-
-
-The final Decision Tree achieved the following results on the held-out test set:
-
-
-
-| Metric | Result |
-
-|---|---:|
-
-| Accuracy | 49.98% |
-
-| Precision | 49.84% |
-
-| Recall | 55.42% |
-
-| F1-score | 52.48% |
-
-| ROC-AUC | 0.513 |
-
-
-
-\### Confusion Matrix
-
-
-
-| | Predicted 0 | Predicted 1 |
-
-|---|---:|---:|
-
-| Actual 0 | 894 | 1112 |
-
-| Actual 1 | 889 | 1105 |
-
-
-
-\### Interpretation
-
-
-
-The model achieved approximately 50% accuracy and an ROC-AUC close to 0.5.
-
-
-
-This indicates that the available sensor and operational variables provide limited predictive discrimination for the `Maintenance\_Flag` target in this dataset.
-
-
-
-Therefore, the model is treated as an educational prototype rather than a reliable production maintenance predictor.
-
-
-
-\## 11. Error Analysis
-
-
-
-The final model produced:
-
-
-
-\- 1,112 false positives
-
-\- 889 false negatives
-
-
-
-The substantial number of both error types indicates that the two target classes are difficult to distinguish using the available features.
-
-
-
-Some differences were observed between false-positive and false-negative feature means, particularly for RPM and Operational\_Hours. However, these differences did not result in strong overall class discrimination.
-
-
-
-\## 12. Streamlit Application
-
-
-
-A lightweight Streamlit application was developed.
-
-
-
+User Inputs
 The application accepts:
+- 🌡️ Temperature
+- 📳 Vibration
+- 🧭 Pressure
+- 💧 Flow Rate
+- ⚙️ RPM
+- ⏱️ Operational Hours
 
+**Output**
+The application provides:
+-Predicted maintenance class
+-Estimated probability of maintenance
+The application loads the saved Decision Tree model and uses the same feature structure used during model training.
 
+**🚀 Live Demo**
+Try the application here:
+https://industrial-machine-failure-prediction-pmsvbmeue5ifk6qrcuahtc.streamlit.app/
 
-\- Temperature
+-----
+---
 
-\- Vibration
-
-\- Pressure
-
-\- Flow Rate
-
-\- RPM
-
-\- Operational Hours
-
-
-
-It then provides:
-
-
-
-\- Predicted maintenance class
-
-\- Estimated probability of maintenance
-
-
-
-The application uses the saved Decision Tree model.
-
-
-
-\## 13. Project Structure
-
-
+## 🏗️ Project Architecture
 
 ```text
+                    ┌──────────────────┐
+                    │   Pump Sensors   │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                ┌────────────────────────┐
+                │    Dataset / CSV       │
+                └────────────┬───────────┘
+                             │
+                             ▼
+                ┌────────────────────────┐
+                │   Data Preprocessing   │
+                └────────────┬───────────┘
+                             │
+                             ▼
+                ┌────────────────────────┐
+                │         EDA            │
+                │ Correlation • MI •     │
+                │ Distributions • Outliers│
+                └────────────┬───────────┘
+                             │
+                             ▼
+                ┌────────────────────────┐
+                │   Feature Selection    │
+                └────────────┬───────────┘
+                             │
+                             ▼
+                ┌────────────────────────┐
+                │ Classification Models  │
+                │                        │
+                │ Logistic Regression    │
+                │ Decision Tree          │
+                │ KNN                    │
+                └────────────┬───────────┘
+                             │
+                             ▼
+                ┌────────────────────────┐
+                │    Model Evaluation    │
+                │ Accuracy • F1 • AUC    │
+                └────────────┬───────────┘
+                             │
+                             ▼
+                ┌────────────────────────┐
+                │     Trained Model      │
+                │  decision_tree.pkl     │
+                └────────────┬───────────┘
+                             │
+                             ▼
+                ┌────────────────────────┐
+                │     Streamlit App      │
+                └────────────┬───────────┘
+                             │
+                             ▼
+                ┌────────────────────────┐
+                │ Maintenance Prediction │
+                └────────────────────────┘
+```
+---
 
-Industrial\_Machine\_Failure\_Prediction/
+---
 
+## 📁 Project Structure
+
+```text
+Industrial_Machine_Failure_Prediction/
 │
-
-├── 00\_Full\_Experiment.ipynb
-
+├── 00_Full_Experiment.ipynb
 ├── requirements.txt
-
-├── download\_data.py
-
+├── download_data.py
 │
-
 ├── app/
-
 │   └── app.py
-
 │
-
 ├── data/
-
 │
-
 ├── figures/
-
 │
-
 ├── models/
-
-│   ├── decision\_tree\_model.pkl
-
-│   └── feature\_names.pkl
-
+│   ├── decision_tree_model.pkl
+│   └── feature_names.pkl
 │
-
 └── notebooks/
+    ├── 01_EDA.ipynb
+    ├── 02_Model_Development.ipynb
+    └── 03_Model_Evaluation.ipynb
+```
+---
+## 🛠️ Technologies Used
 
-&#x20;   ├── 01\_EDA.ipynb
+- 🐍 Python
+- 🐼 Pandas
+- 🔢 NumPy
+- 📊 Matplotlib
+- 📈 Seaborn
+- 🤖 Scikit-learn
+- 💾 Joblib
+- 🌐 Streamlit
+- 📓 Jupyter Notebook
 
-&#x20;   ├── 02\_Model\_Development.ipynb
+-----
+---
+##  ⚙️ Installation
+ Clone the repository
+```text
+git clone <YOUR-GITHUB-REPOSITORY-URL>
+cd Industrial_Machine_Failure_Prediction
+```
+ Create a virtual environment
+Creating a virtual environment is recommended.
+```text
+python -m venv myenv
+```
+Windows PowerShell
+```text
+myenv\Scripts\Activate.ps1
+```
+macOS / Linux
+```text
+source myenv/bin/activate
+```
+ Install the required dependencies:
+```text
+pip install -r requirements.txt
+```
+ Running the application
+Start the Streamlit application:
+```text
+streamlit run app.py
+```
+The application will open in your browser at:
+```text
+http://localhost:8501
+```
+📓 Reproducing the Experiment
+The complete experiment can be reproduced using:
+```text
+00_Full_Experiment.ipynb
+```
+The complete experiment can be reproduced using:
+```text
+01_EDA.ipynb
+02_Model_Development.ipynb
+03_Model_Evaluation.ipynb
+```
+---
+---
+## ⚠️ Limitations
 
-&#x20;   └── 03\_Model\_Evaluation.ipynb
+This project has several important limitations.
 
-https://industrial-machine-failure-prediction-pmsvbmeue5ifk6qrcuahtc.streamlit.app/
+**Dataset Limitations**
+
+Information such as:
+- Historical failure events
+- Maintenance history
+- Component-level degradation
+- Time-series sensor patterns
+- Environmental conditions
+- Failure timestamps
+is not available in the current dataset.
+
+## Target Limitation
+The dataset provides a Maintenance_Flag, but it does not directly document a time-to-failure or failure-within-operating-window target.
+
+Therefore, this project should not be interpreted as a validated **Remaining Useful Life (RUL)** or failure forecasting system.
+
+## Model Performance
+The final model achieved an ROC-AUC of approximately **0.513**, indicating limited predictive signal in the available variables.
+
+Consequently, the model is intended for **educational demonstration and machine learning workflow development**, not real-world maintenance decision-making.
+
+-----
+## 🔮 Future Improvements
+
+Several extensions could make the system more useful for predictive maintenance research:
+
+- Incorporate time-series sensor measurements
+- Add historical maintenance records
+- Include actual failure timestamps
+- Engineer rolling-window sensor features
+- Investigate temporal patterns in vibration and temperature
+- Evaluate Random Forest and Gradient Boosting models
+- Explore XGBoost or LightGBM
+- Apply probability calibration
+- Investigate explainable AI techniques such as SHAP
+- Evaluate models using time-based validation
+- Develop anomaly-detection approaches
+- Use richer industrial datasets containing actual failure events
+
+
+
+-----
+## 🎓 Learning Outcomes
+This project demonstrates practical experience with an end-to-end machine learning workflow:
+```text
+Problem Definition
+        ↓
+Data Understanding
+        ↓
+EDA
+        ↓
+Feature Selection
+        ↓
+Model Development
+        ↓
+Cross-Validation
+        ↓
+Model Evaluation
+        ↓
+Error Analysis
+        ↓
+Model Serialization
+        ↓
+Streamlit Deployment
+```
+The project also demonstrates an important machine learning principle:
+****A model's performance must be interpreted in the context of the information contained in the dataset.****
+A low-performing model can still provide useful insight when its limitations are properly investigated and communicated.
+
+-----
+## 👩‍💻 Author
+Sreekutty Santhosh
